@@ -22,29 +22,53 @@ class DataBase:
             print("Opened database successfully")
         except:
             raise
-    def GetTimeForUnit(self, timeUnit=TimeUnit.NotUse, t = 0):
+    def GetTimeForUnit(self, timeUnit='', t = 0):
         time_local = time.localtime( int(t) )
         dt = 0
-        if timeUnit == TimeUnit.NotUse:
+        if timeUnit == '':
             dt = time.strftime( "%Y-%m-%d %H:%M:%S", time_local )
-        elif timeUnit == TimeUnit.Hour:
+        elif timeUnit == '小时':
             dt = time.strftime( "%Y-%m-%d %H", time_local )
-        elif timeUnit == TimeUnit.Day:
+        elif timeUnit == '天':
             dt = time.strftime( "%Y-%m-%d", time_local )
-        elif timeUnit == TimeUnit.Week:
+        elif timeUnit == '周':
             dt = time.strftime( "%Y-%W", time_local )
-        elif timeUnit == TimeUnit.Month:
+        elif timeUnit == '月':
             dt = time.strftime( "%Y-%m", time_local )
 
         return dt
 
     # 获取列表的第一个元素
     def takeSecond(self, elem):
+        if elem[0] == '':
+            return 0
         return int(elem[0])
 
-    def GetOrders(self, timeUnit=TimeUnit.NotUse, terrace=[], state=[]):
-        orders = self.cursor.execute( '''select * from 订单管理''' ).fetchall()
-        orders.sort(key=self.takeSecond)    #按照时间排序
+    def ListSumFormTime(self, list,timeIndex, sumIndexList, filterIndexList):
+
+        print("")
+
+
+    def GetOrders(self, timeUnit='', terrace=[], state=[], noMaster=''):
+        if noMaster == '等待认领':
+            orders = self.cursor.execute('''select * from 等待认领''').fetchall()
+            totalIndex = 6
+            userIndex = 8
+            extensionIndex = 0
+            stateIndex = 10
+            orderIndex = 4
+        else:
+            orders = self.cursor.execute( '''select * from 订单管理''' ).fetchall()
+            totalIndex = 7
+            userIndex = 9
+            extensionIndex = 11
+            stateIndex = 15
+            orderIndex = 5
+        try:
+            orders.sort(key=self.takeSecond)  # 按照时间排序
+        except:
+            print(orders)
+
         list = [('时间', '订单数量', '总佣金', '用户佣金', '推广提成', '平台抽成', '利润', '利润率' )]
         tt = 0
         x1 = 0
@@ -56,7 +80,7 @@ class DataBase:
         x7 = 0
         lastNum = 0
         for i in range(len(orders)):
-            if ( terrace.count(orders[i][1]) > 0)and (state.count(orders[i][15])):
+            if ( terrace.count(orders[i][1]) > 0)and (state.count(orders[i][stateIndex])):
                 t = self.GetTimeForUnit(timeUnit, orders[i][0])
                 if tt != t:
                     if tt != 0:
@@ -69,13 +93,13 @@ class DataBase:
                         x6 = 0
                         x7 = 0
                     tt = t
-                if lastNum != orders[i][5]:
+                if lastNum != orders[i][orderIndex]:
                     x1 += 1
-                    lastNum = orders[i][5]
+                    lastNum = orders[i][orderIndex]
 
-                x2 += float(orders[i][7])          #总佣金
-                x3 += float(orders[i][9])          #用户佣金
-                x4 += float(orders[i][11])         #推广佣金
+                x2 += float(orders[i][totalIndex])          #总佣金
+                x3 += float(orders[i][userIndex])          #用户佣金
+                x4 += float(orders[i][extensionIndex])         #推广佣金
                 if orders[i][1] == '淘宝':
                     x5 += float(orders[i][7]) * 0.1 #平台抽成
                 x6 = x2 - x3 - x4 - x5              #利润

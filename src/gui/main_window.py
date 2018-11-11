@@ -19,6 +19,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.checkBox_Orders_Teerace_tb.stateChanged.connect( self.UpdateOrderTable )
         self.checkBox_Orders_Type_succe.stateChanged.connect( self.UpdateOrderTable )
         self.checkBox_Orders_Type_wait.stateChanged.connect( self.UpdateOrderTable )
+        self.comboBox_Order_TimeUnit.currentIndexChanged.connect( self.UpdateOrderTable )
 
     def openFile(self):
         path = QFileDialog.getOpenFileName( self, "open file dialog", "", "DataBase(*.db)" )
@@ -40,7 +41,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.checkBox_Orders_Type_wait.isChecked():
             state.append(self.checkBox_Orders_Type_wait.text())
 
-        self.SetTableViewFromList( self.tableView_Order, self.db.GetOrders( TimeUnit.Day, terrace, state ) )
+
+        self.SetTableViewFromList( self.tableView_Order,
+                                   self.db.GetOrders( self.comboBox_Order_TimeUnit.currentText(), terrace, state ,
+                                                      self.comboBox_Orders_User.currentText()) )
 
 
     def SetTableViewFromList(self, tableView, list):

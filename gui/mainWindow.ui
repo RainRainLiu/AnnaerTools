@@ -14,109 +14,227 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout_2">
+   <layout class="QGridLayout" name="gridLayout_8">
     <item row="0" column="0">
+     <widget class="QGroupBox" name="groupBox_5">
+      <property name="title">
+       <string>起始时间</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
+        <widget class="QComboBox" name="comboBox_Order_TimeStart">
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>小时</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>天</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>周</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>月</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QGroupBox" name="groupBox_6">
+      <property name="title">
+       <string>结束时间</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_7">
+       <item row="0" column="0">
+        <widget class="QComboBox" name="comboBox_Order_TimeStop">
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>小时</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>天</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>周</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>月</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QGroupBox" name="groupBox_3">
+      <property name="title">
+       <string>时间单位</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QComboBox" name="comboBox_Order_TimeUnit">
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>小时</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>天</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>周</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>月</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="3">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>16</width>
-        <height>16</height>
-       </size>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
-       <attribute name="icon">
-        <iconset>
-         <normaloff>../icons/main_main.png</normaloff>../icons/main_main.png</iconset>
-       </attribute>
        <attribute name="title">
-        <string>Main</string>
+        <string>用户订单</string>
        </attribute>
-      </widget>
-      <widget class="QWidget" name="tab_2">
-       <attribute name="icon">
-        <iconset>
-         <normaloff>../icons/main_data.png</normaloff>../icons/main_data.png</iconset>
-       </attribute>
-       <attribute name="title">
-        <string>Orders</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_5">
-        <item row="0" column="0">
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="0" column="0" rowspan="3">
          <widget class="QTableView" name="tableView_Order"/>
         </item>
         <item row="0" column="1">
-         <layout class="QGridLayout" name="gridLayout_4">
-          <item row="0" column="0">
-           <widget class="QGroupBox" name="groupBox">
-            <property name="title">
-             <string>订单平台</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout">
-             <item row="0" column="0">
-              <widget class="QCheckBox" name="checkBox_Orders_Teerace_tb">
-               <property name="text">
-                <string>淘宝</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
+         <widget class="QGroupBox" name="groupBox_4">
+          <property name="title">
+           <string>用户</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_5">
+           <item row="0" column="0">
+            <widget class="QComboBox" name="comboBox_Orders_User">
+             <item>
+              <property name="text">
+               <string>用户订单</string>
+              </property>
              </item>
-             <item row="1" column="0">
-              <widget class="QCheckBox" name="checkBox_Orders_Teerace_jd">
-               <property name="text">
-                <string>京东</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
+             <item>
+              <property name="text">
+               <string>等待认领</string>
+              </property>
              </item>
-             <item row="2" column="0">
-              <widget class="QCheckBox" name="checkBox_Orders_Teerace_pdd">
-               <property name="text">
-                <string>拼多多</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QGroupBox" name="groupBox_2">
-            <property name="title">
-             <string>订单类型</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_3">
-             <item row="0" column="0">
-              <widget class="QCheckBox" name="checkBox_Orders_Type_wait">
-               <property name="text">
-                <string>等待收货</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QCheckBox" name="checkBox_Orders_Type_succe">
-               <property name="text">
-                <string>交易成功</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-         </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>订单平台</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="2" column="0">
+            <widget class="QCheckBox" name="checkBox_Orders_Teerace_jd">
+             <property name="text">
+              <string>京东</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QCheckBox" name="checkBox_Orders_Teerace_pdd">
+             <property name="text">
+              <string>拼多多</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QCheckBox" name="checkBox_Orders_Teerace_tb">
+             <property name="text">
+              <string>淘宝</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+           <string>订单类型</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_3">
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="checkBox_Orders_Type_wait">
+             <property name="text">
+              <string>等待收货</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QCheckBox" name="checkBox_Orders_Type_succe">
+             <property name="text">
+              <string>交易成功</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>等待认领</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="tab_3">
+       <attribute name="title">
+        <string>提现记录</string>
+       </attribute>
       </widget>
      </widget>
     </item>
