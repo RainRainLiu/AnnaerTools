@@ -58,6 +58,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             model.setHeaderData( i, Qt.Horizontal, (list[0][i]) )
         tableView.setModel( model )
         list.remove( list[0] )
+        if len(list) == 0:
+            return
 
         for i in range(len(list[0])):
             model.setItem( len(list), i, QtGui.QStandardItem(str(0)) )
