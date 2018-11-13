@@ -38,7 +38,7 @@ class DataBase:
 
         return dt
 
-    # 获取列表的第一个元素
+    # 获取列表的第一个元素0
     def takeSecond(self, elem):
         if elem[0] == '':
             return 0
@@ -55,10 +55,9 @@ class DataBase:
     list 列表源
     takeSecond 获取列表的时间元素
     sumIndexList 求和的位置列表
-    filterIndexList 过滤的位置列表
+    number 去除重复订单编号， 单号位置
     """
-    def ListSumFormTime(self, list=[], takeSecond=0, timeUnit='', sumIndexList=[], filterIndexList=[],
-                        terraceMoneyIndex=None, totallIndex=0, number=None):
+    def ListSumFormTime(self, list=[], takeSecond=0, timeUnit='', sumIndexList=[], number=None):
         try:
             list.sort(key=self.takeSecond)  # 按照时间排序
         except:
@@ -68,119 +67,65 @@ class DataBase:
         for o in sumIndexList:
             resultObj.append( 0 )
         resultObj.append( 0 )       #数量
-        if terraceMoneyIndex != None:
-            resultObj.append( 0 )
 
         resultList = []
         lastNumber = 0
         for elem in list:
-            if self.ListFindFilter(elem, filterIndexList):
-                t = self.GetTimeForUnit( timeUnit, takeSecond(elem) )
-                if resultObj[0] != t:   #时间变化
-                    resultList.append(resultObj)
-                    resultObj=[t]
-                    for o in sumIndexList:
-                        resultObj.append(0)
-                    if terraceMoneyIndex != None:
-                        resultObj.append( 0 )
-                    resultObj.append( 0 )  # 数量
-                for i in range(len(sumIndexList)):
-                    sum = resultObj[i+2] + float(elem[sumIndexList[i]])
-                    resultObj.pop(i+2)  #移除旧值
-                    resultObj.insert(i+2, round(sum, 2))  #添加新值
-                    sum = resultObj[1]
-                    if number !=None:
-                        if lastNumber != elem[number]:
-                            lastNumber = elem[number]
-                            sum += 1
+            t = self.GetTimeForUnit( timeUnit, takeSecond(elem) )
+            if resultObj[0] != t:   #时间变化
+                resultList.append(resultObj)
+                resultObj=[t]
+                for o in sumIndexList:
+                    resultObj.append(0)
 
-                    resultObj.pop( 1 )  # 移除旧值
-                    resultObj.insert( 1, sum )  # 添加新值
-
-                if terraceMoneyIndex != None and elem[terraceMoneyIndex] == '淘宝': #平台抽成
-                    sum = resultObj[-1] + float( elem[totallIndex] ) * 0.1
-                    resultObj.pop(-1)
-                    resultObj.append(round(sum, 2))
+                resultObj.append( 0 )  # 数量
+            for i in range(len(sumIndexList)):
+                sum = resultObj[i+2] + float(elem[sumIndexList[i]])
+                resultObj.pop(i+2)  #移除旧值
+                resultObj.insert(i+2, round(sum, 2))  #添加新值
+                sum = resultObj[1]
+                if number !=None:
+                    if lastNumber != elem[number]:
+                        lastNumber = elem[number]
+                        sum += 1
+                else:
+                    sum += 1
+                resultObj.pop( 1 )  # 移除旧值
+                resultObj.insert( 1, sum )  # 添加新值
         resultList.append(resultObj)
         return resultList
 
 
     def GetOrders(self, timeUnit='', terrace=[], state=[], noMaster=''):
-        orders = self.cursor.execute( '''select * from 订单管理''' ).fetchall()
-        filterList = []
-        for s in state:
-            filterList.append((15, s))
-        orders = self.ListSumFormTime(orders, self.takeSecond, timeUnit, [7, 9, 11], filterList, 1, 7, 5)
 
         list = [('时间', '订单数量', '总佣金', '用户佣金', '推广提成', '平台抽成', '利润', '利润率')]
+        orders = []
+        #过滤
+        for obj in self.cursor.execute( '''select * from 订单管理''' ).fetchall():
+            if state.count(obj[15]) != 0 and terrace.count(obj[1]) > 0:
+                var = 0
+                if obj[1] == '淘宝':
+                    var = float(obj[7]) * 0.1
+                elem = obj + (var,)
+                orders.append(elem)
+        if len(orders) == 0:
+            return list
+        #求和
+        orders = self.ListSumFormTime(orders, self.takeSecond, timeUnit, [7, 9, 11, len(orders[0]) - 1], 6)
+        #整理表头
+
         for obj in orders:
-            if obj[1] != 0:
+            if obj[2] != 0:
                 profit = round(obj[2] - obj[3] - obj[4] - obj[5], 2);
                 list.append((obj[0], obj[1], obj[2], obj[3], obj[4], obj[5], profit, round(profit / obj[2], 2)))
         return list
 
-        if noMaster == '等待认领':
-            orders = self.cursor.execute('''select * from 等待认领''').fetchall()
-            totalIndex = 6
-            userIndex = 8
-            extensionIndex = 0
-            stateIndex = 10
-            orderIndex = 4
-        else:
-            orders = self.cursor.execute( '''select * from 订单管理''' ).fetchall()
-            totalIndex = 7
-            userIndex = 9
-            extensionIndex = 11
-            stateIndex = 15
-            orderIndex = 5
-        try:
-            orders.sort(key=self.takeSecond)  # 按照时间排序
-        except:
-            print(orders)
 
-        list = [('时间', '订单数量', '总佣金', '用户佣金', '推广提成', '平台抽成', '利润', '利润率' )]
-        tt = 0
-        x1 = 0
-        x2 = 0
-        x3 = 0
-        x4 = 0
-        x5 = 0
-        x6 = 0
-        x7 = 0
-        lastNum = 0
-        for i in range(len(orders)):
-            if ( terrace.count(orders[i][1]) > 0)and (state.count(orders[i][stateIndex])):
-                t = self.GetTimeForUnit(timeUnit, orders[i][0])
-                if tt != t:
-                    if tt != 0:
-                        list.append((tt, round(x1, 2), round(x2, 2), round(x3, 2), round(x4, 2), round(x5, 2), round(x6, 2), round(x7, 2)))
-                        x1 = 0
-                        x2 = 0
-                        x3 = 0
-                        x4 = 0
-                        x5 = 0
-                        x6 = 0
-                        x7 = 0
-                    tt = t
-                if lastNum != orders[i][orderIndex]:
-                    x1 += 1
-                    lastNum = orders[i][orderIndex]
-
-                x2 += float(orders[i][totalIndex])          #总佣金
-                x3 += float(orders[i][userIndex])          #用户佣金
-                x4 += float(orders[i][extensionIndex])         #推广佣金
-                if orders[i][1] == '淘宝':
-                    x5 += float(orders[i][7]) * 0.1 #平台抽成
-                x6 = x2 - x3 - x4 - x5              #利润
-                x7 = x6 / x2 * 100                  #利润率
-
-        list.append((tt, round( x1, 2 ), round( x2, 2 ), round( x3, 2 ), round( x4, 2 ), round( x5, 2 ), round( x6, 2 )
-                      ,round( x7, 2 )) )
-        return list
-
-    def GetWithdrawDeposit(self):
-        list = self.cursor.execute( '''select * from 申请提现''' ).fetchall()
-        return list
+    def GetWithdrawDeposit(self, timeUnit=''):
+        deposit = self.cursor.execute( '''select * from 申请提现''' ).fetchall()
+        deposit = self.ListSumFormTime( deposit, self.takeSecond, timeUnit, [6])
+        deposit.insert(0,('时间', '数量','金额'))
+        return deposit
 
     def GetMembers(self):
         list = self.cursor.execute( '''select * from 会员信息''' ).fetchall()
