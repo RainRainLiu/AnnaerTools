@@ -16,16 +16,13 @@ class OrderDialog(QDialog, Ui_OrderDialog):
         super( OrderDialog, self ).__init__( parent, Qt.WindowCloseButtonHint )
         self.setupUi( self )
         self.setModal( True )
-
-        #self.db = dataBase
-        """
         self.checkBox_Orders_Teerace_jd.stateChanged.connect( self.UpdateOrderTable )
         self.checkBox_Orders_Teerace_pdd.stateChanged.connect( self.UpdateOrderTable )
         self.checkBox_Orders_Teerace_tb.stateChanged.connect( self.UpdateOrderTable )
         self.checkBox_Orders_Type_succe.stateChanged.connect( self.UpdateOrderTable )
         self.checkBox_Orders_Type_wait.stateChanged.connect( self.UpdateOrderTable )
         self.comboBox_Order_TimeUnit.currentIndexChanged.connect( self.UpdateOrderTable )
-        """
+
     def SetDataBase(self, dataBase):
         self.db = dataBase
         self.UpdateWithdrawDeposit()
