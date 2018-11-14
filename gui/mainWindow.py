@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(480, 375)
+        MainWindow.resize(554, 418)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.centralwidget)
@@ -31,9 +31,9 @@ class Ui_MainWindow(object):
         self.pushButton_order = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_order.setObjectName("pushButton_order")
         self.gridLayout_2.addWidget(self.pushButton_order, 0, 1, 1, 1)
-        self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setObjectName("label_2")
-        self.gridLayout_2.addWidget(self.label_2, 1, 0, 1, 2)
+        self.widget = QtWidgets.QWidget(self.centralwidget)
+        self.widget.setObjectName("widget")
+        self.gridLayout_2.addWidget(self.widget, 1, 0, 1, 2)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -45,5 +45,4 @@ class Ui_MainWindow(object):
         self.pushButton_open_db.setText(_translate("MainWindow", "..."))
         self.label.setText(_translate("MainWindow", "数据库路径："))
         self.pushButton_order.setText(_translate("MainWindow", "历史订单"))
-        self.label_2.setText(_translate("MainWindow", "TextLabel"))
 
