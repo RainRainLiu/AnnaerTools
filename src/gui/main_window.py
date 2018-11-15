@@ -40,18 +40,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def updateChart(self):
         self.todayConfirmedChar.resize( self.widget_todayUnconfirmed.width(), self.widget_todayUnconfirmed.height())
+        self.withdrawDepositChar.resize(self.widget_withdrawDeposit.width(), self.widget_withdrawDeposit.height())
         if self.db.updateFiel() or self.first:#文件有变化才刷新
             self.first=False
             unconfirmed=[]
-            confirmed = []
+
             titleList = ['淘宝', '京东', '拼多多']
             unconfirmed.append(self.db.GetOrders( '天', ['淘宝'], ['等待收货'] ))
             unconfirmed.append( self.db.GetOrders( '天', ['京东'], ['等待收货'] ) )
             unconfirmed.append( self.db.GetOrders( '天', ['拼多多'], ['等待收货'] ) )
 
-            confirmed.append( self.db.GetOrders( '天', ['淘宝'], ['交易成功'] ) )
-            confirmed.append( self.db.GetOrders( '天', ['京东'], ['交易成功'] ) )
-            confirmed.append( self.db.GetOrders( '天', ['拼多多'], ['交易成功'] ) )
+            #confirmed.append( self.db.GetOrders( '天', ['淘宝'], ['交易成功'] ) )
+            #confirmed.append( self.db.GetOrders( '天', ['京东'], ['交易成功'] ) )
+            #confirmed.append( self.db.GetOrders( '天', ['拼多多'], ['交易成功'] ) )
             todayGain = []
             todayTiTle= []
 
@@ -67,8 +68,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 title = '今日利润：' + str(round(sum, 2))
                 self.todayConfirmedChar.update_figure( todayTiTle, todayGain, title )
+                #self.todayConfirmedChar.updateLine([1,2,3],[[1,2,3],[3,2,1]])
             except Exception as e:
                 print(e)
 
-
+            confirmed = self.db.GetOrders( '天', ['淘宝', '京东', '拼多多'], ['交易成功'] )
+            scale = []
+            data = [['利润',[]], ['订单',[]]]
+            for day in confirmed[-24:]:
+                scale.append(day[0][-2:])
+                data[0][1].append(day[6])
+                data[1][1].append(day[1])
+            self.withdrawDepositChar.updateLine(scale, data)
 
