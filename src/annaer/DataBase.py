@@ -1,27 +1,44 @@
 
 import sqlite3
 import time
-from enum import Enum
+import os
+import shutil
 
-class TimeUnit(Enum):
-    NotUse = 0
-    Hour = 1
-    Day = 2
-    Week = 3
-    Month = 4
+from PyQt5.QtCore import QTimer
 
+readDB='./reading.db'
 class DataBase:
-    orderList = 0
-    withdrawDeposit = 0
-    conn = 0
-    cursor = 0
+    path = ''
+    conn = None
+    cursor=None
     def __init__(self,dataBasePath):
+        self.path = dataBasePath
+        self.mycopyfile( self.path, './reading.db' )
+        self.conn = sqlite3.connect( './reading.db' )
+        self.cursor = self.conn.cursor()
+
+    """
+    每次读取数据前调用，否则数据不更新
+    返回文件是否变化
+    """
+    def updateFiel(self):
         try:
-            self.conn = sqlite3.connect(dataBasePath)
-            self.cursor = self.conn.cursor()
-            print("Opened database successfully")
-        except:
-            raise
+            if os.path.isfile(readDB)==False or os.path.getmtime( self.path ) > os.path.getmtime( readDB ):
+                if self.conn != None:
+                    self.conn.close()
+                if  os.path.isfile( readDB ) == False:
+                    os.remove(readDB)
+                self.mycopyfile( self.path, readDB )
+                self.conn = sqlite3.connect( readDB )
+                self.cursor = self.conn.cursor()
+                print('update')
+                return True
+        except Exception as e:
+            print(e)
+        return False
+
+
+
     def GetTimeForUnit(self, timeUnit='', t = 0):
         time_local = time.localtime( int(t) )
         dt = 0
@@ -35,21 +52,22 @@ class DataBase:
             dt = time.strftime( "%Y-%W", time_local )
         elif timeUnit == '月':
             dt = time.strftime( "%Y-%m", time_local )
-
         return dt
+
+    def mycopyfile(self, srcfile, dstfile):
+        if not os.path.isfile( srcfile ):
+            print("%s not exist!" % (srcfile))
+        else:
+            fpath, fname = os.path.split( dstfile )  # 分离文件名和路径
+            if not os.path.exists( fpath ):
+                os.makedirs( fpath )                # 创建路径
+            shutil.copyfile( srcfile, dstfile )     # 复制文件
 
     # 获取列表的第一个元素0
     def takeSecond(self, elem):
         if elem[0] == '':
             return 0
         return int(elem[0])
-
-    def ListFindFilter(self, elem, filterIndexList):
-        for filter in filterIndexList:
-            if elem[filter[0]] == filter[1]:    #找到要过滤的目标
-                return True
-        return False
-
 
     """
     list 列表源
@@ -97,23 +115,25 @@ class DataBase:
 
 
     def GetOrders(self, timeUnit='', terrace=[], state=[], noMaster=''):
-
         list = [('时间', '订单数量', '总佣金', '用户佣金', '推广提成', '平台抽成', '利润', '利润率')]
         orders = []
         #过滤
-        for obj in self.cursor.execute( '''select * from 订单管理''' ).fetchall():
-            if state.count(obj[15]) != 0 and terrace.count(obj[1]) > 0:
-                var = 0
-                if obj[1] == '淘宝':
-                    var = float(obj[7]) * 0.1
-                elem = obj + (var,)
-                orders.append(elem)
+        try:
+            for obj in self.cursor.execute( '''select * from 订单管理''' ).fetchall():
+                if state.count(obj[15]) != 0 and terrace.count(obj[1]) > 0:
+                    var = 0
+                    if obj[1] == '淘宝':
+                        var = float(obj[7]) * 0.1
+                    elem = obj + (var,)
+                    orders.append(elem)
+        except Exception as e:
+            print(e)
+            return list
         if len(orders) == 0:
             return list
         #求和
         orders = self.ListSumFormTime(orders, self.takeSecond, timeUnit, [7, 9, 11, len(orders[0]) - 1], 6)
         #整理表头
-
         for obj in orders:
             if obj[2] != 0:
                 profit = round(obj[2] - obj[3] - obj[4] - obj[5], 2);
