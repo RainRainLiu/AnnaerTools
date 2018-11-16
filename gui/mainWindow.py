@@ -6,7 +6,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -36,13 +36,7 @@ class Ui_MainWindow(object):
         self.widget_todayUnconfirmed = QtWidgets.QWidget(self.centralwidget)
         self.widget_todayUnconfirmed.setObjectName("widget_todayUnconfirmed")
         self.gridLayout_2.addWidget(self.widget_todayUnconfirmed, 0, 0, 1, 1)
-        self.widget_yesterdayUnconfirmed = QtWidgets.QWidget(self.centralwidget)
-        self.widget_yesterdayUnconfirmed.setObjectName("widget_yesterdayUnconfirmed")
-        self.gridLayout_2.addWidget(self.widget_yesterdayUnconfirmed, 0, 1, 1, 1)
         self.gridLayout_3.addLayout(self.gridLayout_2, 1, 0, 1, 2)
-        self.widget_withdrawDeposit = QtWidgets.QWidget(self.centralwidget)
-        self.widget_withdrawDeposit.setObjectName("widget_withdrawDeposit")
-        self.gridLayout_3.addWidget(self.widget_withdrawDeposit, 2, 0, 1, 2)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)

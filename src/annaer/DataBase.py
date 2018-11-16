@@ -13,6 +13,8 @@ class DataBase:
     cursor=None
     def __init__(self,dataBasePath):
         self.path = dataBasePath
+        if os.path.isfile( readDB ) == True:
+            os.remove( readDB )
         self.mycopyfile( self.path, './reading.db' )
         self.conn = sqlite3.connect( './reading.db' )
         self.cursor = self.conn.cursor()
@@ -29,6 +31,7 @@ class DataBase:
                 if  os.path.isfile( readDB ) == False:
                     os.remove(readDB)
                 self.mycopyfile( self.path, readDB )
+
                 self.conn = sqlite3.connect( readDB )
                 self.cursor = self.conn.cursor()
                 print('update')
@@ -115,7 +118,7 @@ class DataBase:
 
 
     def GetOrders(self, timeUnit='', terrace=[], state=[], noMaster=''):
-        list = [('时间', '订单数量', '总佣金', '用户佣金', '推广提成', '平台抽成', '利润', '利润率')]
+        list = [('时间', '订单数量', '总佣金', '用户佣金', '推广提成', '平台抽成（税）', '利润', '利润率%')]
         orders = []
         #过滤
         try:
@@ -123,7 +126,10 @@ class DataBase:
                 if state.count(obj[15]) != 0 and terrace.count(obj[1]) > 0:
                     var = 0
                     if obj[1] == '淘宝':
-                        var = float(obj[7]) * 0.1
+                        var = float(obj[7]) * 0.1 #平台抽成
+                    elif obj[1] == '京东':
+                        var = float( obj[7] ) * 0.015   #2W一下的税
+
                     elem = obj + (var,)
                     orders.append(elem)
         except Exception as e:
@@ -137,7 +143,7 @@ class DataBase:
         for obj in orders:
             if obj[2] != 0:
                 profit = round(obj[2] - obj[3] - obj[4] - obj[5], 2);
-                list.append((obj[0], obj[1], obj[2], obj[3], obj[4], obj[5], profit, round(profit / obj[2], 2)))
+                list.append((obj[0], obj[1], obj[2], obj[3], obj[4], obj[5], profit, round((profit / obj[2] * 100), 2)))
         return list
 
 

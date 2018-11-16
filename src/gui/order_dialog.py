@@ -1,14 +1,10 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QMainWindow, QFileDialog
-from PyQt5.QtCore import QTimer
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QDialog
-
-from gui.mainWindow import Ui_MainWindow
-from src.annaer.DataBase import DataBase
+from PyQt5.QtGui import QIcon
 
 from gui.orderDialog import Ui_OrderDialog
-from src.annaer.DataBase import DataBase
+
 
 class OrderDialog(QDialog, Ui_OrderDialog):
     db = 0
@@ -22,7 +18,9 @@ class OrderDialog(QDialog, Ui_OrderDialog):
         self.checkBox_Orders_Type_succe.stateChanged.connect( self.UpdateOrderTable )
         self.checkBox_Orders_Type_wait.stateChanged.connect( self.UpdateOrderTable )
         self.comboBox_Order_TimeUnit.currentIndexChanged.connect( self.UpdateOrderTable )
-
+        self.comboBox_Order_TimeUnit.currentIndexChanged.connect( self.UpdateWithdrawDeposit )
+        self.setWindowTitle( 'AnnaerTools' )
+        self.setWindowIcon( QIcon( 'main.ico' ) )
     def SetDataBase(self, dataBase):
         self.db = dataBase
         self.UpdateWithdrawDeposit()
@@ -49,8 +47,6 @@ class OrderDialog(QDialog, Ui_OrderDialog):
 
         self.SetTableViewFromList( self.tableView_Order,
                                    self.db.GetOrders( self.comboBox_Order_TimeUnit.currentText(), terrace, state ) )
-
-        # self.SetTableViewFromList(self.tableView_Order, self.db.GetWithdrawDeposit(self.comboBox_Order_TimeUnit.currentText()))
 
     def SetTableViewFromList(self, tableView, list):
         model = QtGui.QStandardItemModel( tableView )
