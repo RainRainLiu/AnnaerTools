@@ -13,6 +13,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     db = None
     timer=None
     first=True
+    orderDlg=None
     def __init__(self):
         super( MainWindow, self ).__init__()
         self.setupUi( self )
@@ -41,9 +42,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.timer.timeout.connect( self.updateChart )
 
     def Orders(self):
-        orderDlg = OrderDialog( self )
-        orderDlg.SetDataBase( self.db )
-        orderDlg.show()
+        if self.orderDlg == None:
+            self.orderDlg = OrderDialog( self )
+        self.orderDlg.SetDataBase( self.db )
+        self.orderDlg.show()
 
     def updateChart(self):
         self.todayUnconfirmedChar.resize( self.widget_todayUnconfirmed.width(), self.widget_todayUnconfirmed.height())

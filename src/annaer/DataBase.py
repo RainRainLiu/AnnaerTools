@@ -28,6 +28,8 @@ class DataBase:
             if os.path.isfile(readDB)==False or os.path.getmtime( self.path ) > os.path.getmtime( readDB ):
                 if self.conn != None:
                     self.conn.close()
+                    del self.conn
+                    del self.cursor
                 if  os.path.isfile( readDB ) == False:
                     os.remove(readDB)
                 self.mycopyfile( self.path, readDB )
@@ -117,7 +119,7 @@ class DataBase:
         return resultList
 
 
-    def GetOrders(self, timeUnit='', terrace=[], state=[], noMaster=''):
+    def GetOrders(self, timeUnit='', terrace=[], state=[], noMaster='', scale=[]):
         list = [('时间', '订单数量', '总佣金', '用户佣金', '推广提成', '平台抽成（税）', '利润', '利润率%')]
         orders = []
         #过滤
@@ -137,6 +139,23 @@ class DataBase:
             return list
         if len(orders) == 0:
             return list
+
+        if len(scale) > 0:
+            ordersTemp = []
+            for item in orders:
+                for sc in scale[1:]:
+                    if float(item[7]) <= float(sc[0]):
+                        try:
+                            userGlod = float( item[7] ) * float( sc[1] ) / 100
+                            agentGlod = userGlod * float( scale[0] ) / 100
+                            obj = item[:9] + (userGlod,) + (item[10],) + (agentGlod,) + item[12:]
+                            ordersTemp.append( obj )
+                            break
+                        except:
+                            ordersTemp.append( item )
+                            break
+                    ordersTemp.append(item)
+            orders = ordersTemp
         #求和
         orders = self.ListSumFormTime(orders, self.takeSecond, timeUnit, [7, 9, 11, len(orders[0]) - 1], 6)
         #整理表头

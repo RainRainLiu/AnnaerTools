@@ -3,10 +3,10 @@ from PyQt5 import QtGui
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtGui import QIcon
 
-from gui.orderDialog import Ui_OrderDialog
+from gui.orderDialog import Ui_Dialog
 
 
-class OrderDialog(QDialog, Ui_OrderDialog):
+class OrderDialog(QDialog, Ui_Dialog):
     db = 0
     def __init__(self, parent):
         super( OrderDialog, self ).__init__( parent, Qt.WindowCloseButtonHint )
@@ -19,16 +19,32 @@ class OrderDialog(QDialog, Ui_OrderDialog):
         self.checkBox_Orders_Type_wait.stateChanged.connect( self.UpdateOrderTable )
         self.comboBox_Order_TimeUnit.currentIndexChanged.connect( self.UpdateOrderTable )
         self.comboBox_Order_TimeUnit.currentIndexChanged.connect( self.UpdateWithdrawDeposit )
+        self.pushButton_calculate.clicked.connect(self.UpdateScaleTable)
         self.setWindowTitle( 'AnnaerTools' )
         self.setWindowIcon( QIcon( 'main.ico' ) )
     def SetDataBase(self, dataBase):
         self.db = dataBase
         self.UpdateWithdrawDeposit()
         self.UpdateOrderTable()
+        self.UpdateScaleTable()
 
     def UpdateWithdrawDeposit(self):
         self.SetTableViewFromList( self.tableView_tixian,
                                    self.db.GetWithdrawDeposit( self.comboBox_Order_TimeUnit.currentText() ) )
+
+    def UpdateScaleTable(self):
+        terrace = ['淘宝', '京东', '拼多多']
+        state = ['交易成功']
+        sacle=[(self.lineEdit_bl_9.text()), (self.lineEdit_yj_1.text(), self.lineEdit_bl_1.text()), (self.lineEdit_yj_2.text(), self.lineEdit_bl_2.text()),
+               (self.lineEdit_yj_3.text(), self.lineEdit_bl_3.text()), (self.lineEdit_yj_4.text(), self.lineEdit_bl_4.text()),
+               (self.lineEdit_yj_5.text(), self.lineEdit_bl_5.text()), (self.lineEdit_yj_6.text(), self.lineEdit_bl_6.text()),
+               (self.lineEdit_yj_7.text(), self.lineEdit_bl_7.text()), (self.lineEdit_yj_8.text(), self.lineEdit_bl_8.text())]
+
+
+        self.SetTableViewFromList( self.tableView_yongjing,
+                                   self.db.GetOrders( self.comboBox_Order_TimeUnit.currentText(), terrace, state ,
+                                                      scale=sacle) )
+
 
     def UpdateOrderTable(self):
         terrace = []
