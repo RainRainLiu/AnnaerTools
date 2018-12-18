@@ -63,13 +63,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             for i in range(len(unconfirmed)):
                 if self.db.GetTimeForUnit( '天', time.time() ) == unconfirmed[i][-1][0]:  # 是今天
-                    todayGain.append( unconfirmed[i][-1][6] )
+                    todayGain.append( unconfirmed[i][-1][5] )
                     todayTiTle.append( titleList[i] )
 
             sh = 0
             confirmed = self.db.GetOrders( '天', ['淘宝', '京东', '拼多多'], ['交易成功'] )
             if self.db.GetTimeForUnit( '天', time.time() ) == confirmed[-1][0]:  # 是今天
-                sh = confirmed[-1][6]
+                sh = confirmed[-1][5]
 
             tx = 0
             if self.db.GetTimeForUnit( '天', time.time() ) == self.db.GetWithdrawDeposit( "天" )[-1][0]:  # 是今天

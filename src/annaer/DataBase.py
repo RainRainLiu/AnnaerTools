@@ -19,6 +19,11 @@ class DataBase:
         self.conn = sqlite3.connect( './reading.db' )
         self.cursor = self.conn.cursor()
 
+    def __del__(self):
+        if self.conn != None:
+            self.conn.close()
+            del self.conn
+            del self.cursor
     """
     每次读取数据前调用，否则数据不更新
     返回文件是否变化
@@ -120,7 +125,8 @@ class DataBase:
 
 
     def GetOrders(self, timeUnit='', terrace=[], state=[], noMaster='', scale=[]):
-        list = [('时间', '订单数量', '总佣金', '用户佣金', '推广提成', '平台抽成（税）', '利润', '利润率%')]
+        #list = [('时间', '订单数量', '总佣金', '用户佣金', '推广提成', '平台抽成（税）', '利润', '利润率%')]
+        list = [('时间', '订单数量', '总佣金', '垫付金额', '平台抽成（税）', '利润', '利润率%')]
         orders = []
         #过滤
         try:
@@ -151,10 +157,11 @@ class DataBase:
                             obj = item[:9] + (userGlod,) + (item[10],) + (agentGlod,) + item[12:]
                             ordersTemp.append( obj )
                             break
-                        except:
+                        except Exception as e:
+                            print(e)
                             ordersTemp.append( item )
                             break
-                    ordersTemp.append(item)
+                #ordersTemp.append(item)
             orders = ordersTemp
         #求和
         orders = self.ListSumFormTime(orders, self.takeSecond, timeUnit, [7, 9, 11, len(orders[0]) - 1], 6)
@@ -162,7 +169,7 @@ class DataBase:
         for obj in orders:
             if obj[2] != 0:
                 profit = round(obj[2] - obj[3] - obj[4] - obj[5], 2);
-                list.append((obj[0], obj[1], obj[2], obj[3], obj[4], obj[5], profit, round((profit / obj[2] * 100), 2)))
+                list.append((obj[0], obj[1], obj[2], round(obj[3] + obj[4], 2), obj[5], profit, round((profit / obj[2] * 100), 2)))
         return list
 
 
